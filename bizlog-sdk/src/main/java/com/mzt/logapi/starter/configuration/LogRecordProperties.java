@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 /**
  * @author muzhantong
  * create on 2022/1/6 3:26 下午
@@ -75,7 +77,7 @@ public class LogRecordProperties {
      */
     private Boolean diffLog = false;
 
-    private String useEqualsMethod;
+    private List<String> useEqualsMethod;
 
     public void setAddTemplate(String template) {
         validatePlaceHolder(template);

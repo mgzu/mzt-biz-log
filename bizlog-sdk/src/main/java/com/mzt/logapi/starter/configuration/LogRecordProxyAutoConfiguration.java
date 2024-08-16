@@ -19,7 +19,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -102,7 +101,7 @@ public class LogRecordProxyAutoConfiguration implements ImportAware {
         // issue#111
         diffParseFunction.addUseEqualsClass(LocalDateTime.class);
         if (!StringUtils.isEmpty(logRecordProperties.getUseEqualsMethod())) {
-            diffParseFunction.addUseEqualsClass(Arrays.asList(logRecordProperties.getUseEqualsMethod().split(",")));
+            diffParseFunction.addUseEqualsClass(logRecordProperties.getUseEqualsMethod());
         }
         return diffParseFunction;
     }
