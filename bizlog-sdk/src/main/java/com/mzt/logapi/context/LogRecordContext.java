@@ -1,5 +1,6 @@
 package com.mzt.logapi.context;
 
+import lombok.experimental.UtilityClass;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayDeque;
@@ -11,15 +12,12 @@ import java.util.Map;
  * @author muzhantong
  * create on 2021/2/9 2:22 下午
  */
+@UtilityClass
 public class LogRecordContext {
 
     private static final InheritableThreadLocal<Deque<Map<String, Object>>> VARIABLE_MAP_STACK = new InheritableThreadLocal<>();
 
     private static final InheritableThreadLocal<Map<String, Object>> GLOBAL_VARIABLE_MAP = new InheritableThreadLocal<>();
-
-    private LogRecordContext() {
-        throw new IllegalStateException("Utility class");
-    }
 
     public static void putVariable(String name, Object value) {
         if (VARIABLE_MAP_STACK.get() == null) {
