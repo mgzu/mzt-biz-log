@@ -68,7 +68,7 @@ public class LogRecordValueParser implements BeanFactoryAware {
                 while (matcher.find()) {
                     String expression = matcher.group(2);
                     String functionName = matcher.group(1);
-                    if (DiffParseFunction.diffFunctionName.equals(functionName)) {
+                    if (DiffParseFunction.DIFF_FUNCTION_NAME.equals(functionName)) {
                         expression = getDiffFunctionValue(evaluationContext, annotatedElementKey, expression);
                         sameDiff = Objects.equals("", expression);
                     } else {

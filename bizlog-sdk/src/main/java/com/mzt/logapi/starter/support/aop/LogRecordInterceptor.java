@@ -219,9 +219,9 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Method
     }
 
     private Map<CodeVariableType, Object> getCodeVariable(Method method) {
-        Map<CodeVariableType, Object> map = new HashMap<>();
-        map.put(CodeVariableType.ClassName, method.getDeclaringClass());
-        map.put(CodeVariableType.MethodName, method.getName());
+        Map<CodeVariableType, Object> map = new EnumMap<>(CodeVariableType.class);
+        map.put(CodeVariableType.CLASS_NAME, method.getDeclaringClass());
+        map.put(CodeVariableType.METHOD_NAME, method.getName());
         return map;
     }
 
