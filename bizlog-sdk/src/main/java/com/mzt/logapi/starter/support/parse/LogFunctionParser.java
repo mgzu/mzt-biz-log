@@ -16,7 +16,6 @@ public class LogFunctionParser {
 
     private IFunctionService functionService;
 
-
     public String getFunctionReturnValue(Map<String, String> beforeFunctionNameAndReturnMap, Object value, String expression, String functionName) {
         if (StringUtils.isEmpty(functionName)) {
             return value == null ? Strings.EMPTY : value.toString();
@@ -40,12 +39,6 @@ public class LogFunctionParser {
     public String getFunctionCallInstanceKey(String functionName, String paramExpression) {
         return functionName + paramExpression;
     }
-
-
-    public void setFunctionService(IFunctionService functionService) {
-        this.functionService = functionService;
-    }
-
 
     public boolean beforeFunction(String functionName) {
         return functionService.beforeFunction(functionName);

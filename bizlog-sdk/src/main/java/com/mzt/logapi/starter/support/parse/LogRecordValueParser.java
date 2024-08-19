@@ -2,6 +2,7 @@ package com.mzt.logapi.starter.support.parse;
 
 import com.mzt.logapi.beans.MethodExecuteResult;
 import com.mzt.logapi.service.impl.DiffParseFunction;
+import lombok.Setter;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
@@ -27,8 +28,10 @@ public class LogRecordValueParser implements BeanFactoryAware {
     protected BeanFactory beanFactory;
     protected boolean diffSameWhetherSaveLog;
 
+    @Setter
     private LogFunctionParser logFunctionParser;
 
+    @Setter
     private DiffParseFunction diffParseFunction;
 
     public static int strCount(String srcText, String findText) {
@@ -79,19 +82,15 @@ public class LogRecordValueParser implements BeanFactoryAware {
             } else {
                 expressionValues.put(expressionTemplate, expressionTemplate);
             }
-
         }
         return expressionValues;
     }
 
     private boolean recordSameDiff(boolean sameDiff, boolean diffSameWhetherSaveLog) {
-        if(diffSameWhetherSaveLog == true) {
+        if (diffSameWhetherSaveLog) {
             return true;
         }
-        if(!diffSameWhetherSaveLog && sameDiff) {
-            return false;
-        }
-        return true;
+        return !sameDiff;
     }
 
     private String getDiffFunctionValue(EvaluationContext evaluationContext, AnnotatedElementKey annotatedElementKey, String expression) {
@@ -146,11 +145,4 @@ public class LogRecordValueParser implements BeanFactoryAware {
         this.beanFactory = beanFactory;
     }
 
-    public void setLogFunctionParser(LogFunctionParser logFunctionParser) {
-        this.logFunctionParser = logFunctionParser;
-    }
-
-    public void setDiffParseFunction(DiffParseFunction diffParseFunction) {
-        this.diffParseFunction = diffParseFunction;
-    }
 }

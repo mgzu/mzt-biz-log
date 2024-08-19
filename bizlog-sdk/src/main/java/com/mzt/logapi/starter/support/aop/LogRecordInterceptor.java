@@ -12,6 +12,7 @@ import com.mzt.logapi.service.IOperatorGetService;
 import com.mzt.logapi.service.impl.DiffParseFunction;
 import com.mzt.logapi.starter.support.parse.LogFunctionParser;
 import com.mzt.logapi.starter.support.parse.LogRecordValueParser;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -22,7 +23,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StopWatch;
 import org.springframework.util.StringUtils;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.*;
 
@@ -34,8 +34,9 @@ import static com.mzt.logapi.service.ILogRecordPerformanceMonitor.*;
  * @author mzt.
  */
 @Slf4j
-public class LogRecordInterceptor extends LogRecordValueParser implements MethodInterceptor, Serializable, SmartInitializingSingleton {
+public class LogRecordInterceptor extends LogRecordValueParser implements MethodInterceptor, SmartInitializingSingleton {
 
+    @Setter
     private LogRecordOperationSource logRecordOperationSource;
 
     private String tenantId;
@@ -44,8 +45,10 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Method
 
     private IOperatorGetService operatorGetService;
 
+    @Setter
     private ILogRecordPerformanceMonitor logRecordPerformanceMonitor;
 
+    @Setter
     private boolean joinTransaction;
 
     @Override
@@ -185,7 +188,7 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Method
                                    Map<String, String> functionNameAndReturnMap, LogRecordOps operation) {
         if (!StringUtils.isEmpty(operation.getCondition())) {
             String condition = singleProcessTemplate(methodExecuteResult, operation.getCondition(), functionNameAndReturnMap);
-            if (StringUtils.endsWithIgnoreCase(condition, "false")) return true;
+            return StringUtils.endsWithIgnoreCase(condition, "false");
         }
         return false;
     }
@@ -194,6 +197,9 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Method
                          String action, Map<String, String> expressionValues) {
         if (StringUtils.isEmpty(expressionValues.get(action)) ||
                 (!diffSameWhetherSaveLog && action.contains("#") && Objects.equals(action, expressionValues.get(action)))) {
+            if (log.isDebugEnabled()) {
+                log.debug("expression maybe wrong: {}", action);
+            }
             return;
         }
         LogRecord logRecord = LogRecord.builder()
@@ -234,7 +240,6 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Method
     }
 
     private String getOperatorIdFromServiceAndPutTemplate(LogRecordOps operation, List<String> spElTemplates) {
-
         String realOperatorId = "";
         if (StringUtils.isEmpty(operation.getOperatorId())) {
             realOperatorId = operatorGetService.getUser().getOperatorId();
@@ -251,25 +256,12 @@ public class LogRecordInterceptor extends LogRecordValueParser implements Method
         return AopProxyUtils.ultimateTargetClass(target);
     }
 
-
-    public void setLogRecordOperationSource(LogRecordOperationSource logRecordOperationSource) {
-        this.logRecordOperationSource = logRecordOperationSource;
-    }
-
     public void setTenant(String tenant) {
         this.tenantId = tenant;
     }
 
     public void setLogRecordService(ILogRecordService bizLogService) {
         this.bizLogService = bizLogService;
-    }
-
-    public void setLogRecordPerformanceMonitor(ILogRecordPerformanceMonitor logRecordPerformanceMonitor) {
-        this.logRecordPerformanceMonitor = logRecordPerformanceMonitor;
-    }
-
-    public void setJoinTransaction(boolean joinTransaction) {
-        this.joinTransaction = joinTransaction;
     }
 
     public void setDiffSameWhetherSaveLog(boolean diffLog) {

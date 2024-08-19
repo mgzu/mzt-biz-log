@@ -6,6 +6,7 @@ import com.mzt.logapi.util.diff.ArrayDiffer;
 import de.danielbechler.diff.ObjectDifferBuilder;
 import de.danielbechler.diff.comparison.ComparisonService;
 import de.danielbechler.diff.node.DiffNode;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.support.AopUtils;
 
@@ -24,11 +25,11 @@ public class DiffParseFunction {
     public static final String diffFunctionName = "_DIFF";
     public static final String OLD_OBJECT = "_oldObj";
 
+    @Setter
     private IDiffItemsToLogContentService diffItemsToLogContentService;
 
     private final Set<Class<?>> comparisonSet = new HashSet<>();
 
-    //@Override
     public String functionName() {
         return diffFunctionName;
     }
@@ -68,10 +69,6 @@ public class DiffParseFunction {
         return diff(oldObj, newObj);
     }
 
-    public void setDiffItemsToLogContentService(IDiffItemsToLogContentService diffItemsToLogContentService) {
-        this.diffItemsToLogContentService = diffItemsToLogContentService;
-    }
-
     public void addUseEqualsClass(List<String> classList) {
         if (classList != null && !classList.isEmpty()) {
             for (String clazz : classList) {
@@ -85,7 +82,7 @@ public class DiffParseFunction {
         }
     }
 
-    public void addUseEqualsClass(Class clazz) {
+    public void addUseEqualsClass(Class<?> clazz) {
         comparisonSet.add(clazz);
     }
 }

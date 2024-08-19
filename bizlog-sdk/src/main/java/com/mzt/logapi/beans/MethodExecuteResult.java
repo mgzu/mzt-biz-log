@@ -1,6 +1,7 @@
 package com.mzt.logapi.beans;
 
 import lombok.Getter;
+import lombok.Setter;
 
 import java.lang.reflect.Method;
 
@@ -9,10 +10,14 @@ import java.lang.reflect.Method;
  **/
 @Getter
 public class MethodExecuteResult {
+    @Setter
     private boolean success;
+    @Setter
     private Throwable throwable;
+    @Setter
     private String errorMsg;
 
+    @Setter
     private Object result;
     private final Method method;
     private final Object[] args;
@@ -24,19 +29,4 @@ public class MethodExecuteResult {
         this.targetClass = targetClass;
     }
 
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
-    }
-
-    public void setErrorMsg(String errorMsg) {
-        this.errorMsg = errorMsg;
-    }
-
-    public void setResult(Object result) {
-        this.result = result;
-    }
 }

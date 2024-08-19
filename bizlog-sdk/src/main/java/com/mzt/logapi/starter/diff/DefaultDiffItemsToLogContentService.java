@@ -88,6 +88,7 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
             Field childrenField = ReflectionUtils.findField(DiffNode.class, "children");
             assert childrenField != null;
             ReflectionUtils.makeAccessible(childrenField);
+            //noinspection unchecked
             Map<ElementSelector, DiffNode> children = (Map<ElementSelector, DiffNode>) ReflectionUtils.getField(childrenField, node);
             assert children != null;
             for (DiffNode value : children.values()) memorandum(value, set);
@@ -166,6 +167,7 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
         if (fieldSourceValue != null && fieldSourceValue.getClass().isArray()) {
             return new ArrayList<>(Arrays.asList((Object[]) fieldSourceValue));
         }
+        //noinspection unchecked
         return fieldSourceValue == null ? new ArrayList<>() : (Collection<Object>) fieldSourceValue;
     }
 
