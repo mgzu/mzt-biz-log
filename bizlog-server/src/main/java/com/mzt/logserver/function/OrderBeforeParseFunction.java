@@ -1,5 +1,6 @@
 package com.mzt.logserver.function;
 
+import com.mzt.logapi.context.FunctionContext;
 import com.mzt.logapi.service.IParseFunction;
 import com.mzt.logserver.UserQueryService;
 import com.mzt.logserver.pojo.Order;
@@ -32,7 +33,8 @@ public class OrderBeforeParseFunction implements IParseFunction {
     }
 
     @Override
-    public String apply(Object value) {
+    public String apply(FunctionContext context) {
+        Object value = context.getValue();
         log.info("@@@@@@@@");
         if (StringUtils.isEmpty(value)) {
             return "";

@@ -1,5 +1,6 @@
 package com.mzt.logapi.starter.support.parse;
 
+import com.mzt.logapi.context.DefaultFunctionContext;
 import com.mzt.logapi.service.IFunctionService;
 import lombok.AllArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -25,7 +26,10 @@ public class LogFunctionParser {
         if (beforeFunctionNameAndReturnMap != null && beforeFunctionNameAndReturnMap.containsKey(functionCallInstanceKey)) {
             functionReturnValue = beforeFunctionNameAndReturnMap.get(functionCallInstanceKey);
         } else {
-            functionReturnValue = functionService.apply(functionName, value);
+            DefaultFunctionContext context = new DefaultFunctionContext();
+            context.setFunctionName(functionName);
+            context.setValue(value);
+            functionReturnValue = functionService.apply(context);
         }
         return functionReturnValue;
     }

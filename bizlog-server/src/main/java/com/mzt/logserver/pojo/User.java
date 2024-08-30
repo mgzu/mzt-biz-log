@@ -1,8 +1,11 @@
 package com.mzt.logserver.pojo;
 
-import com.mzt.logapi.starter.annotation.DiffLogField;
-import com.mzt.logapi.starter.annotation.DiffLogAllFields;
 import com.mzt.logapi.starter.annotation.DIffLogIgnore;
+import com.mzt.logapi.starter.annotation.DiffLogAllFields;
+import com.mzt.logapi.starter.annotation.DiffLogField;
+import com.mzt.logserver.annotations.LogRecordFieldEnum;
+import com.mzt.logserver.enums.UserSexEnum;
+import com.mzt.logserver.enums.UserStatusEnum;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -31,8 +34,16 @@ public class User {
     /**
      * 性别
      */
-    @DiffLogField(name = "性别", function = "SEX")
+    @DiffLogField(name = "性别", function = "ENUM")
+    @LogRecordFieldEnum(UserSexEnum.class)
     private String sex;
+
+    /**
+     * 性别
+     */
+    @DiffLogField(name = "状态", function = "ENUM")
+    @LogRecordFieldEnum(UserStatusEnum.class)
+    private Integer status;
 
     /**
      * 用户地址
@@ -57,7 +68,6 @@ public class User {
     private String[] likeStrings;
 
     private String[] noLikeStrings;
-
 
     private LocalDateTime localDateTime;
 

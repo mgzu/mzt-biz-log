@@ -1,5 +1,6 @@
 package com.mzt.logserver.function;
 
+import com.mzt.logapi.context.FunctionContext;
 import com.mzt.logapi.service.IParseFunction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,8 @@ public class ExtInfoParseFunction implements IParseFunction {
     }
 
     @Override
-    public String apply(Object value) {
+    public String apply(FunctionContext context) {
+        Object value = context.getValue();
         log.info("===========");
         if (StringUtils.isEmpty(value)) {
             return "";

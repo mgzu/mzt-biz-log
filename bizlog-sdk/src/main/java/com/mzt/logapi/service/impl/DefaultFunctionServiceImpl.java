@@ -1,6 +1,6 @@
 package com.mzt.logapi.service.impl;
 
-
+import com.mzt.logapi.context.FunctionContext;
 import com.mzt.logapi.service.IFunctionService;
 import com.mzt.logapi.service.IParseFunction;
 
@@ -17,12 +17,12 @@ public class DefaultFunctionServiceImpl implements IFunctionService {
     }
 
     @Override
-    public String apply(String functionName, Object value) {
-        IParseFunction function = parseFunctionFactory.getFunction(functionName);
+    public String apply(FunctionContext context) {
+        IParseFunction function = parseFunctionFactory.getFunction(context.getFunctionName());
         if (function == null) {
-            return value.toString();
+            return context.getValue().toString();
         }
-        return function.apply(value);
+        return function.apply(context);
     }
 
     @Override

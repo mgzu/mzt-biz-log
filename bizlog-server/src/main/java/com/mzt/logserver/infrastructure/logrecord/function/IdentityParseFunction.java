@@ -1,6 +1,6 @@
 package com.mzt.logserver.infrastructure.logrecord.function;
 
-
+import com.mzt.logapi.context.FunctionContext;
 import com.mzt.logapi.service.IParseFunction;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
  * create on 2022/1/3 2:43 下午
  */
 @Component
-public class IdentityParseFunction implements IParseFunction {
+public class IdentityParseFunction implements IParseFunction<FunctionContext> {
 
     @Override
     public boolean executeBefore() {
@@ -22,7 +22,7 @@ public class IdentityParseFunction implements IParseFunction {
     }
 
     @Override
-    public String apply(Object value) {
-        return value.toString();
+    public String apply(FunctionContext context) {
+        return context.getValue().toString();
     }
 }

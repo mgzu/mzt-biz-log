@@ -1,6 +1,6 @@
 package com.mzt.logapi.service.impl;
 
-
+import com.mzt.logapi.context.FunctionContext;
 import com.mzt.logapi.service.IParseFunction;
 
 /**
@@ -20,7 +20,7 @@ public class DefaultParseFunction implements IParseFunction {
     }
 
     @Override
-    public String apply(Object value) {
+    public String apply(FunctionContext context) {
         return null;
     }
 }

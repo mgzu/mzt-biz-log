@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
 
-public class LogRecordOperationSourceTest {
+class LogRecordOperationSourceTest {
 
     private LogRecordOperationSource source = new LogRecordOperationSource();
 
     @Test
-    public void testGetInterfaceMethodIfPossible() throws NoSuchMethodException {
+    void testGetInterfaceMethodIfPossible() throws NoSuchMethodException {
         // given
         Method method = MyService.class.getMethod("doStuff");
 
@@ -24,7 +24,7 @@ public class LogRecordOperationSourceTest {
     }
 
     @Test
-    public void testGetInterfaceMethodIfPossible_NotPublic() throws NoSuchMethodException {
+    void testGetInterfaceMethodIfPossible_NotPublic() throws NoSuchMethodException {
         // given
         Method method = MyService.class.getMethod("doStuff");
 
@@ -37,7 +37,7 @@ public class LogRecordOperationSourceTest {
     }
 
     @Test
-    public void testGetInterfaceMethodIfPossible_Interface() throws NoSuchMethodException {
+    void testGetInterfaceMethodIfPossible_Interface() throws NoSuchMethodException {
         // given
         Method method = MyIf.class.getMethod("doStuff");
 
@@ -50,7 +50,7 @@ public class LogRecordOperationSourceTest {
     }
 
     @Test
-    public void testGetInterfaceMethodIfPossible_Object() throws NoSuchMethodException {
+    void testGetInterfaceMethodIfPossible_Object() throws NoSuchMethodException {
         // given
         Method method = Object.class.getMethod("toString");
 

@@ -7,8 +7,8 @@ import com.mzt.logserver.infrastructure.constants.LogRecordType;
 import com.mzt.logserver.infrastructure.logrecord.service.DbLogRecordService;
 import com.mzt.logserver.pojo.Order;
 import com.mzt.logserver.pojo.User;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -23,7 +23,7 @@ import java.util.List;
  * @author wulang
  **/
 @EnableAspectJAutoProxy(exposeProxy = true)
-public class IUserServiceTest extends BaseTest {
+class IUserServiceTest extends BaseTest {
     @Resource
     private IUserService userService;
     @Resource
@@ -31,11 +31,11 @@ public class IUserServiceTest extends BaseTest {
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void diffUser() {
+    void diffUser() {
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -45,7 +45,7 @@ public class IUserServiceTest extends BaseTest {
         User newUser = new User();
         newUser.setId(1L);
         newUser.setName("李四");
-        newUser.setSex("女");
+        newUser.setSex("FEMALE");
         newUser.setAge(20);
         User.Address newAddress = new User.Address();
         newAddress.setProvinceName("湖南省");
@@ -54,21 +54,21 @@ public class IUserServiceTest extends BaseTest {
         userService.diffUser(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void testGlobalVariable() {
+    void testGlobalVariable() {
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -83,21 +83,21 @@ public class IUserServiceTest extends BaseTest {
 
         userService.testGlobalVariable(user, order);
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(2, logRecordList.size());
+        Assertions.assertEquals(2, logRecordList.size());
         LogRecord userLogRecord = logRecordList.get(0);
-        Assert.assertEquals(userLogRecord.getAction(), "更新张三用户积分信息");
+        Assertions.assertEquals("更新张三用户积分信息", userLogRecord.getAction());
         LogRecord orderLogRecord = logRecordList.get(1);
-        Assert.assertEquals(orderLogRecord.getAction(), "更新用户张三的订单xxxx(99)信息,更新内容为...");
+        Assertions.assertEquals("更新用户张三的订单xxxx(99)信息,更新内容为...", orderLogRecord.getAction());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void testGlobalVariableCover() {
+    void testGlobalVariableCover() {
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -112,21 +112,56 @@ public class IUserServiceTest extends BaseTest {
 
         userService.testGlobalVariableCover(user, order);
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(2, logRecordList.size());
+        Assertions.assertEquals(2, logRecordList.size());
         LogRecord userLogRecord = logRecordList.get(0);
-        Assert.assertEquals(userLogRecord.getAction(), "更新张三用户积分信息");
+        Assertions.assertEquals("更新张三用户积分信息", userLogRecord.getAction());
         LogRecord orderLogRecord = logRecordList.get(1);
-        Assert.assertEquals(orderLogRecord.getAction(), "更新用户李四的订单xxxx(99)信息,更新内容为...");
+        Assertions.assertEquals("更新用户李四的订单xxxx(99)信息,更新内容为...", orderLogRecord.getAction());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void testAbstract() {
+    void testAbstract() {
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
+        user.setAge(18);
+        user.setStatus(0);
+        User.Address address = new User.Address();
+        address.setProvinceName("湖北省");
+        address.setCityName("武汉市");
+        user.setAddress(address);
+
+        User newUser = new User();
+        newUser.setId(1L);
+        newUser.setName("李四");
+        newUser.setSex("FEMALE");
+        newUser.setAge(20);
+        newUser.setStatus(1);
+        User.Address newAddress = new User.Address();
+        newAddress.setProvinceName("湖南省");
+        newAddress.setCityName("长沙市");
+        newUser.setAddress(newAddress);
+        userService.testAbstracts(user, newUser);
+
+        List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
+        Assertions.assertEquals(1, logRecordList.size());
+        LogRecord logRecord = logRecordList.get(0);
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】；【状态】从【正常】修改为【锁定】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
+        logRecordService.clean();
+    }
+
+    @Test
+    @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+    void testAbstracts() {
+        User user = new User();
+        user.setId(1L);
+        user.setName("张三");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -136,7 +171,7 @@ public class IUserServiceTest extends BaseTest {
         User newUser = new User();
         newUser.setId(1L);
         newUser.setName("李四");
-        newUser.setSex("女");
+        newUser.setSex("FEMALE");
         newUser.setAge(20);
         User.Address newAddress = new User.Address();
         newAddress.setProvinceName("湖南省");
@@ -145,61 +180,28 @@ public class IUserServiceTest extends BaseTest {
         userService.testAbstracts(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
-        logRecordService.clean();
-    }
-
-    @Test
-    @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void testAbstracts() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("张三");
-        user.setSex("男");
-        user.setAge(18);
-        User.Address address = new User.Address();
-        address.setProvinceName("湖北省");
-        address.setCityName("武汉市");
-        user.setAddress(address);
-
-        User newUser = new User();
-        newUser.setId(1L);
-        newUser.setName("李四");
-        newUser.setSex("女");
-        newUser.setAge(20);
-        User.Address newAddress = new User.Address();
-        newAddress.setProvinceName("湖南省");
-        newAddress.setCityName("长沙市");
-        newUser.setAddress(newAddress);
-        userService.testAbstracts(user, newUser);
-
-        List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
-        LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
 
         List<LogRecord> orderLogRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.ORDER);
-        Assert.assertEquals(1, orderLogRecordList.size());
+        Assertions.assertEquals(1, orderLogRecordList.size());
         LogRecord orderLogRecord = orderLogRecordList.get(0);
-        Assert.assertEquals(orderLogRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(orderLogRecord.getExtra());
-        Assert.assertEquals(orderLogRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】", orderLogRecord.getAction());
+        Assertions.assertNotNull(orderLogRecord.getExtra());
+        Assertions.assertEquals("111", orderLogRecord.getOperator());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void testInterface() {
+    void testInterface() {
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -209,7 +211,7 @@ public class IUserServiceTest extends BaseTest {
         User newUser = new User();
         newUser.setId(1L);
         newUser.setName("李四");
-        newUser.setSex("女");
+        newUser.setSex("FEMALE");
         newUser.setAge(20);
         User.Address newAddress = new User.Address();
         newAddress.setProvinceName("湖南省");
@@ -218,28 +220,28 @@ public class IUserServiceTest extends BaseTest {
         userService.testInterface(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.ORDER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
 
         List<LogRecord> orderLogRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.ORDER);
-        Assert.assertEquals(1, orderLogRecordList.size());
+        Assertions.assertEquals(1, orderLogRecordList.size());
         LogRecord orderLogRecord = orderLogRecordList.get(0);
-        Assert.assertEquals(orderLogRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(orderLogRecord.getExtra());
-        Assert.assertEquals(orderLogRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】", orderLogRecord.getAction());
+        Assertions.assertNotNull(orderLogRecord.getExtra());
+        Assertions.assertEquals("111", orderLogRecord.getOperator());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void testInterfaceAndAbstract() {
+    void testInterfaceAndAbstract() {
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -249,7 +251,7 @@ public class IUserServiceTest extends BaseTest {
         User newUser = new User();
         newUser.setId(1L);
         newUser.setName("李四");
-        newUser.setSex("女");
+        newUser.setSex("FEMALE");
         newUser.setAge(20);
         User.Address newAddress = new User.Address();
         newAddress.setProvinceName("湖南省");
@@ -258,29 +260,28 @@ public class IUserServiceTest extends BaseTest {
         userService.testInterfaceAndAbstract(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
 
         List<LogRecord> orderLogRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.ORDER);
-        Assert.assertEquals(1, orderLogRecordList.size());
+        Assertions.assertEquals(1, orderLogRecordList.size());
         LogRecord orderLogRecord = orderLogRecordList.get(0);
-        Assert.assertEquals(orderLogRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(orderLogRecord.getExtra());
-        Assert.assertEquals(orderLogRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】", orderLogRecord.getAction());
+        Assertions.assertNotNull(orderLogRecord.getExtra());
+        Assertions.assertEquals("111", orderLogRecord.getOperator());
         logRecordService.clean();
     }
 
-
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void testInterfaceAndAbstract2() {
+    void testInterfaceAndAbstract2() {
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -290,7 +291,7 @@ public class IUserServiceTest extends BaseTest {
         User newUser = new User();
         newUser.setId(1L);
         newUser.setName("李四");
-        newUser.setSex("女");
+        newUser.setSex("FEMALE");
         newUser.setAge(20);
         User.Address newAddress = new User.Address();
         newAddress.setProvinceName("湖南省");
@@ -299,28 +300,28 @@ public class IUserServiceTest extends BaseTest {
         userService.testInterfaceAndAbstract2(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.ORDER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
         //接口+抽象类，只支持抽象类
 //        List<LogRecord> orderLogRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.ORDER);
-//        Assert.assertEquals(1, orderLogRecordList.size());
+//        Assertions.assertEquals(1, orderLogRecordList.size());
 //        LogRecord orderLogRecord = orderLogRecordList.get(0);
-//        Assert.assertEquals(orderLogRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-//        Assert.assertNotNull(orderLogRecord.getExtra());
-//        Assert.assertEquals(orderLogRecord.getOperator(), "111");
+//        Assertions.assertEquals(orderLogRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】");
+//        Assertions.assertNotNull(orderLogRecord.getExtra());
+//        Assertions.assertEquals(orderLogRecord.getOperator(), "111");
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void test_DIffLogIgnore_容器类失效() {
+    void test_DIffLogIgnore_容器类失效() {
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -342,7 +343,7 @@ public class IUserServiceTest extends BaseTest {
         User newUser = new User();
         newUser.setId(1L);
         newUser.setName("李四");
-        newUser.setSex("女");
+        newUser.setSex("FEMALE");
         newUser.setAge(20);
         User.Address newAddress = new User.Address();
         newAddress.setProvinceName("湖南省");
@@ -363,17 +364,17 @@ public class IUserServiceTest extends BaseTest {
         userService.diffUser(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【noLikeList】添加了【虾，龟】删除了【蛙，鱼】；【noLikeStrings】添加了【j，u】删除了【p，m】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【noLikeList】添加了【虾，龟】删除了【蛙，鱼】；【noLikeStrings】添加了【j，u】删除了【p，m】；【性别】从【男】修改为【女】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void test_LocalDateTime() {
+    void test_LocalDateTime() {
         User user = new User();
         user.setId(1L);
         LocalDateTime now = LocalDateTime.now();
@@ -386,17 +387,17 @@ public class IUserServiceTest extends BaseTest {
         userService.diffUser(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【localDateTime】从【" + now + "】修改为【-999999999-01-01T00:00】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【localDateTime】从【" + now + "】修改为【-999999999-01-01T00:00】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void test_sameDiffNotRecord() {
+    void test_sameDiffNotRecord() {
         User user = new User();
         user.setId(1L);
         User newUser = new User();
@@ -404,13 +405,13 @@ public class IUserServiceTest extends BaseTest {
         userService.diffUser(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(0, logRecordList.size());
+        Assertions.assertEquals(0, logRecordList.size());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void test_sameDiffNotRecordWithMoreExpression() {
+    void test_sameDiffNotRecordWithMoreExpression() {
         User user = new User();
         user.setId(1L);
         User newUser = new User();
@@ -418,13 +419,13 @@ public class IUserServiceTest extends BaseTest {
         userService.diffUserByTwoExpression(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(0, logRecordList.size());
+        Assertions.assertEquals(0, logRecordList.size());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void test_LocalDate() {
+    void test_LocalDate() {
         User user = new User();
         user.setId(1L);
         LocalDate now = LocalDate.now();
@@ -437,24 +438,23 @@ public class IUserServiceTest extends BaseTest {
         userService.diffUser(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【localDate】从【" + now + "】修改为【-999999999-01-01】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【localDate】从【" + now + "】修改为【-999999999-01-01】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-
-    public void test_diffLog_true() {
+    void test_diffLog_true() {
         LogRecordInterceptor bean = SpringUtil.getBean(LogRecordInterceptor.class);
         bean.setDiffSameWhetherSaveLog(true);
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -463,16 +463,16 @@ public class IUserServiceTest extends BaseTest {
         userService.diffUser(user, user);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息");
+        Assertions.assertEquals("更新了用户信息", logRecord.getAction());
     }
 
-    public void test_testGlobalVariable_diff() {
+    void test_testGlobalVariable_diff() {
         User newUser = new User();
         newUser.setId(1L);
         newUser.setName("李四");
-        newUser.setSex("女");
+        newUser.setSex("FEMALE");
         newUser.setAge(20);
         User.Address newAddress = new User.Address();
         newAddress.setProvinceName("湖南省");
@@ -481,23 +481,23 @@ public class IUserServiceTest extends BaseTest {
         userService.testGlobalVariableDiff(newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(newUser.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals("更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男】修改为【女】", logRecord.getAction());
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals("111", logRecord.getOperator());
         logRecordService.clean();
     }
 
     @Test
     @Sql(scripts = "/sql/clean.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-    public void test_diffLog_false() {
+    void test_diffLog_false() {
         LogRecordInterceptor bean = SpringUtil.getBean(LogRecordInterceptor.class);
         bean.setDiffSameWhetherSaveLog(false);
         User user = new User();
         user.setId(1L);
         user.setName("张三");
-        user.setSex("男");
+        user.setSex("MALE");
         user.setAge(18);
         User.Address address = new User.Address();
         address.setProvinceName("湖北省");
@@ -506,7 +506,7 @@ public class IUserServiceTest extends BaseTest {
         userService.diffUser(user, user);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(0, logRecordList.size());
+        Assertions.assertEquals(0, logRecordList.size());
         logRecordService.clean();
     }
 

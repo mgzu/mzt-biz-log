@@ -1,7 +1,6 @@
 server:
   port: 8080
 
-
 # endpoints 健康检测相关配置,如需改动请同步修改check.sh文件TEST_URL
 management:
   server:
@@ -19,7 +18,6 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password: 9527
-    schema: sql/create.sql
     initialSize: 5
     minIdle: 5
     maxActive: 20
@@ -31,6 +29,10 @@ spring:
     testOnBorrow: false
     testOnReturn: false
     poolPreparedStatements: true
+  sql:
+    init:
+      schema-locations: sql/h2_create.sql
+      encoding: UTF-8
 
 logging:
   level:
@@ -41,4 +43,6 @@ logging:
 mzt:
   log:
     record:
-      useEqualsMethod: java.time.LocalDate,java.time.Instant
+      use-equals-method:
+        - java.time.LocalDate
+        - java.time.Instant

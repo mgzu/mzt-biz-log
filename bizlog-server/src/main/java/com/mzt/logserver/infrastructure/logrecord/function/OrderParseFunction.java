@@ -1,5 +1,6 @@
 package com.mzt.logserver.infrastructure.logrecord.function;
 
+import com.mzt.logapi.context.FunctionContext;
 import com.mzt.logapi.service.IParseFunction;
 import com.mzt.logserver.pojo.Order;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +26,8 @@ public class OrderParseFunction implements IParseFunction {
     }
 
     @Override
-    public String apply(Object value) {
+    public String apply(FunctionContext context) {
+        Object value = context.getValue();
         log.info("@@@@@@@@");
         if (StringUtils.isEmpty(value)) {
             return "";

@@ -22,7 +22,7 @@ import java.util.Set;
  */
 @Slf4j
 public class DiffParseFunction {
-    public static final String diffFunctionName = "_DIFF";
+    public static final String DIFF_FUNCTION_NAME = "_DIFF";
     public static final String OLD_OBJECT = "_oldObj";
 
     @Setter
@@ -31,7 +31,7 @@ public class DiffParseFunction {
     private final Set<Class<?>> comparisonSet = new HashSet<>();
 
     public String functionName() {
-        return diffFunctionName;
+        return DIFF_FUNCTION_NAME;
     }
 
     //@Override

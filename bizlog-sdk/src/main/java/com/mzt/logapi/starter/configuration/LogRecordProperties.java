@@ -17,23 +17,23 @@ public class LogRecordProperties {
     /**
      * 字段名称的替换变量
      */
-    private final String FIELD_PLACEHOLDER = "__fieldName";
+    private static final String FIELD_PLACEHOLDER = "__fieldName";
     /**
      * 更新前的值的替换变量
      */
-    private final String SOURCE_VALUE_PLACEHOLDER = "__sourceValue";
+    private static final String SOURCE_VALUE_PLACEHOLDER = "__sourceValue";
     /**
      * 更新后的值的替换变量
      */
-    private final String TARGET_VALUE_PLACEHOLDER = "__targetValue";
+    private static final String TARGET_VALUE_PLACEHOLDER = "__targetValue";
     /**
      * 列表添加项的值的替换变量
      */
-    private final String LIST_ADD_VALUE_PLACEHOLDER = "__addValues";
+    private static final String LIST_ADD_VALUE_PLACEHOLDER = "__addValues";
     /**
      * 列表删除项的替换变量
      */
-    private final String LIST_DEL_VALUE_PLACEHOLDER = "__delValues";
+    private static final String LIST_DEL_VALUE_PLACEHOLDER = "__delValues";
 
     /**
      * 字段从空改为有值的时候的日志内容模板

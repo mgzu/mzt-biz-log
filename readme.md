@@ -454,12 +454,12 @@ public class Order {
         orderService.diff(order, order1);
 
         List<LogRecord> logRecordList = logRecordService.queryLog("xxx");
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了订单【创建人的用户ID】从【9001】修改为【9002】；【创建人的用户姓名】从【用户1】修改为【用户2】；【列表项】添加了【xxxx(aaa)】删除了【xxxx(bbb)】；【订单ID】从【xxxx(99)】修改为【xxxx(88)】；【订单号】从【MT0000011】修改为【MT0000099】；");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
-        Assert.assertEquals(logRecord.getBizNo(), order1.getOrderNo());
+        Assertions.assertEquals(logRecord.getAction(), "更新了订单【创建人的用户ID】从【9001】修改为【9002】；【创建人的用户姓名】从【用户1】修改为【用户2】；【列表项】添加了【xxxx(aaa)】删除了【xxxx(bbb)】；【订单ID】从【xxxx(99)】修改为【xxxx(88)】；【订单号】从【MT0000011】修改为【MT0000099】；");
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals(logRecord.getBizNo(), order1.getOrderNo());
         logRecordService.clean();
     }
     
@@ -551,12 +551,12 @@ public class User {
         userService.diffUser(user, newUser);
 
         List<LogRecord> logRecordList = logRecordService.queryLog(String.valueOf(user.getId()), LogRecordType.USER);
-        Assert.assertEquals(1, logRecordList.size());
+        Assertions.assertEquals(1, logRecordList.size());
         LogRecord logRecord = logRecordList.get(0);
-        Assert.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
-        Assert.assertNotNull(logRecord.getExtra());
-        Assert.assertEquals(logRecord.getOperator(), "111");
-        Assert.assertEquals(logRecord.getId(), user.getId());
+        Assertions.assertEquals(logRecord.getAction(), "更新了用户信息【address的cityName】从【武汉市】修改为【长沙市】；【address的provinceName】从【湖北省】修改为【湖南省】；【name】从【张三】修改为【李四】；【性别】从【男333】修改为【女333】");
+        Assertions.assertNotNull(logRecord.getExtra());
+        Assertions.assertEquals(logRecord.getOperator(), "111");
+        Assertions.assertEquals(logRecord.getId(), user.getId());
         logRecordService.clean();
     }
 ```

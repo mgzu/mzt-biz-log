@@ -1,5 +1,7 @@
 package com.mzt.logapi.starter.diff;
 
+import com.mzt.logapi.context.DiffFunctionContext;
+import com.mzt.logapi.context.FunctionContext;
 import com.mzt.logapi.service.IFunctionService;
 import com.mzt.logapi.starter.annotation.DIffLogIgnore;
 import com.mzt.logapi.starter.annotation.DiffLogAllFields;
@@ -73,9 +75,14 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
         // 是否是容器类型的字段
         boolean valueIsContainer = valueIsContainer(node, sourceObject, targetObject);
         String functionName = diffLogFieldAnnotation != null ? diffLogFieldAnnotation.function() : "";
+
+        DiffFunctionContext context = new DiffFunctionContext();
+        context.setFunctionName(functionName);
+        context.setNode(node);
+
         String logContent = valueIsContainer
-                ? getCollectionDiffLogContent(filedLogName, node, sourceObject, targetObject, functionName)
-                : getDiffLogContent(filedLogName, node, sourceObject, targetObject, functionName);
+                ? getCollectionDiffLogContent(filedLogName, context, sourceObject, targetObject)
+                : getDiffLogContent(filedLogName, context, sourceObject, targetObject);
         if (!StringUtils.isEmpty(logContent)) {
             stringBuilder.append(logContent).append(logRecordProperties.getFieldSeparator());
         }
@@ -136,34 +143,34 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
         return fieldNamePrefix;
     }
 
-    public String getCollectionDiffLogContent(String filedLogName, DiffNode node, Object sourceObject, Object targetObject, String functionName) {
+    public String getCollectionDiffLogContent(String filedLogName, DiffFunctionContext context, Object sourceObject, Object targetObject) {
         //集合走单独的diff模板
-        Collection<Object> sourceList = getListValue(node, sourceObject);
-        Collection<Object> targetList = getListValue(node, targetObject);
+        Collection<Object> sourceList = getListValue(context, sourceObject);
+        Collection<Object> targetList = getListValue(context, targetObject);
         Collection<Object> addItemList = listSubtract(targetList, sourceList);
         Collection<Object> delItemList = listSubtract(sourceList, targetList);
-        String listAddContent = listToContent(functionName, addItemList);
-        String listDelContent = listToContent(functionName, delItemList);
+        String listAddContent = listToContent(context.getFunctionName(), addItemList);
+        String listDelContent = listToContent(context.getFunctionName(), delItemList);
         return logRecordProperties.formatList(filedLogName, listAddContent, listDelContent);
     }
 
-    public String getDiffLogContent(String filedLogName, DiffNode node, Object sourceObject, Object targetObject, String functionName) {
+    public String getDiffLogContent(String filedLogName, DiffFunctionContext context, Object sourceObject, Object targetObject) {
+        DiffNode node = context.getNode();
         switch (node.getState()) {
             case ADDED:
-                return logRecordProperties.formatAdd(filedLogName, getFunctionValue(getFieldValue(node, targetObject), functionName));
+                return logRecordProperties.formatAdd(filedLogName, getFunctionValue(context.setTarget(targetObject).setValue(getFieldValue(node, targetObject))));
             case CHANGED:
-                return logRecordProperties.formatUpdate(filedLogName, getFunctionValue(getFieldValue(node, sourceObject), functionName), getFunctionValue(getFieldValue(node, targetObject), functionName));
+                return logRecordProperties.formatUpdate(filedLogName, getFunctionValue(context.setTarget(sourceObject).setValue(getFieldValue(node, sourceObject))), getFunctionValue(context.setTarget(targetObject).setValue(getFieldValue(node, targetObject))));
             case REMOVED:
-                return logRecordProperties.formatDeleted(filedLogName, getFunctionValue(getFieldValue(node, sourceObject), functionName));
+                return logRecordProperties.formatDeleted(filedLogName, getFunctionValue(context.setTarget(sourceObject).setValue(getFieldValue(node, sourceObject))));
             default:
                 log.warn("diff log not support");
                 return "";
         }
     }
 
-    private Collection<Object> getListValue(DiffNode node, Object object) {
-        Object fieldSourceValue = getFieldValue(node, object);
-        //noinspection unchecked
+    private Collection<Object> getListValue(DiffFunctionContext context, Object object) {
+        Object fieldSourceValue = getFieldValue(context.getNode(), object);
         if (fieldSourceValue != null && fieldSourceValue.getClass().isArray()) {
             return new ArrayList<>(Arrays.asList((Object[]) fieldSourceValue));
         }
@@ -181,17 +188,17 @@ public class DefaultDiffItemsToLogContentService implements IDiffItemsToLogConte
         StringBuilder listAddContent = new StringBuilder();
         if (!CollectionUtils.isEmpty(addItemList)) {
             for (Object item : addItemList) {
-                listAddContent.append(getFunctionValue(item, functionName)).append(logRecordProperties.getListItemSeparator());
+                listAddContent.append(getFunctionValue(DiffFunctionContext.builder().functionName(functionName).value(item).build())).append(logRecordProperties.getListItemSeparator());
             }
         }
         return listAddContent.toString().replaceAll(logRecordProperties.getListItemSeparator() + "$", "");
     }
 
-    private String getFunctionValue(Object canonicalGet, String functionName) {
-        if (StringUtils.isEmpty(functionName)) {
-            return canonicalGet.toString();
+    private String getFunctionValue(FunctionContext context) {
+        if (StringUtils.isEmpty(context.getFunctionName())) {
+            return context.getValue().toString();
         }
-        return functionService.apply(functionName, canonicalGet.toString());
+        return functionService.apply(context);
     }
 
     private Object getFieldValue(DiffNode node, Object o2) {

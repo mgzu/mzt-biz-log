@@ -1,5 +1,6 @@
 package com.mzt.logserver.infrastructure.logrecord.function;
 
+import com.mzt.logapi.context.FunctionContext;
 import com.mzt.logapi.service.IParseFunction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -23,7 +24,8 @@ public class SexParseFunction implements IParseFunction {
     }
 
     @Override
-    public String apply(Object value) {
+    public String apply(FunctionContext context) {
+        Object value = context.getValue();
         return StringUtils.isEmpty(value) ? "" : value + "333";
     }
 }

@@ -1,5 +1,6 @@
 package com.mzt.logserver.function;
 
+import com.mzt.logapi.context.FunctionContext;
 import com.mzt.logapi.service.IParseFunction;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +16,7 @@ public class DollarParseFunction implements IParseFunction {
     }
 
     @Override
-    public String apply(Object value) {
+    public String apply(FunctionContext context) {
         return "10$,/666";
     }
 }
