@@ -19,7 +19,7 @@ public class LogRecordRepositoryImpl extends ServiceImpl<LogRecordMapper, LogRec
         queryWrapper.lambda()
                 .eq(LogRecordPO::getType, type)
                 .eq(LogRecordPO::getBizNo, bizNo)
-                .orderByDesc(LogRecordPO::getCreateTime);
+                .orderByDesc(LogRecordPO::getId);
         return baseMapper.selectList(queryWrapper);
     }
 
@@ -31,7 +31,7 @@ public class LogRecordRepositoryImpl extends ServiceImpl<LogRecordMapper, LogRec
                 .eq(LogRecordPO::getType, type)
                 .eq(LogRecordPO::getSubType, subType)
                 .eq(LogRecordPO::getBizNo, bizNo)
-                .orderByDesc(LogRecordPO::getCreateTime);
+                .orderByDesc(LogRecordPO::getId);
         return baseMapper.selectList(queryWrapper);
     }
 
