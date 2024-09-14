@@ -39,7 +39,7 @@ public class User {
     private String sex;
 
     /**
-     * 性别
+     * 状态
      */
     @DiffLogField(name = "状态", function = "ENUM")
     @LogRecordFieldEnum(UserStatusEnum.class)

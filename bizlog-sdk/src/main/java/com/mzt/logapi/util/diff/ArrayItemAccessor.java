@@ -8,10 +8,7 @@ import de.danielbechler.diff.selector.CollectionItemElementSelector;
 import de.danielbechler.diff.selector.ElementSelector;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.*;
 
 /**
  * @author wulang
@@ -50,8 +47,8 @@ public class ArrayItemAccessor implements TypeAwareAccessor, Accessor {
 
     @Override
     public Object get(final Object target) {
-        final Collection targetCollection = objectAsCollection(target);
-        if (targetCollection == null) {
+        final Collection<?> targetCollection = objectAsCollection(target);
+        if (targetCollection.isEmpty()) {
             return null;
         }
         for (final Object item : targetCollection) {
@@ -65,7 +62,7 @@ public class ArrayItemAccessor implements TypeAwareAccessor, Accessor {
     @Override
     public void set(final Object target, final Object value) {
         final Collection<Object> targetCollection = objectAsCollection(target);
-        if (targetCollection == null) {
+        if (targetCollection.isEmpty()) {
             return;
         }
         final Object previous = get(target);
@@ -75,10 +72,9 @@ public class ArrayItemAccessor implements TypeAwareAccessor, Accessor {
         targetCollection.add(value);
     }
 
-    @SuppressWarnings("unchecked")
     private static Collection<Object> objectAsCollection(final Object object) {
         if (object == null) {
-            return null;
+            return Collections.emptyList();
         } else if (object.getClass().isArray()) {
             return new ArrayList<>(Arrays.asList((Object[]) object));
         }
@@ -88,7 +84,7 @@ public class ArrayItemAccessor implements TypeAwareAccessor, Accessor {
     @Override
     public void unset(final Object target) {
         final Collection<?> targetCollection = objectAsCollection(target);
-        if (targetCollection == null) {
+        if (targetCollection.isEmpty()) {
             return;
         }
         final Iterator<?> iterator = targetCollection.iterator();

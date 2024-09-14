@@ -8,13 +8,13 @@ import org.springframework.lang.NonNull;
  */
 public interface FunctionContext {
     /**
-     * function name
+     * @return the function name
      */
     @NonNull
     String getFunctionName();
 
     /**
-     * value
+     * @return target value
      */
     @NonNull
     Object getValue();
